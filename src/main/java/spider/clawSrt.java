@@ -17,6 +17,11 @@ import static util.HttpTool.doGet;
  * @create: 2019-02-18 15:45
  **/
 public class clawSrt {
+
+    /**
+     * @param start
+     * @param end    分页下载字幕
+     */
     public static void clawByStartAndEnd(int start, int end) {
         for (int i = start; i <= end; i++) {
             clawSrtData(i);
@@ -55,12 +60,11 @@ public class clawSrt {
      */
     public static void clawSrtData(int talkId, String savePath) {
         try {
-            String str = "zh-cn,en";     // 主题分类数据
-            List<String> languageList = Arrays.asList(str.split(","));
-            for (String language : languageList) {
+
+            /*for (String language : languageList) {
                 Map<String, String> param = new HashMap<>();
-                param.put("language", language);
-                String srt = doGet("https://www.ted.com/talks/" + talkId + "/transcript.json?language=" + language, null);
+                //param.put("language", language);
+
                 System.out.println("返回的数据  >>" + srt);
                 Thread.sleep(300);
                 if (StringUtils.isNotBlank(srt)) {
@@ -68,11 +72,52 @@ public class clawSrt {
                     bw.write(srt);
                     bw.close();
                 }
+            }*/
+            String enSrt = clawSrtDataByLanguage(talkId, "en");
+            if (StringUtils.isBlank(enSrt)) return;
+            String zhCnSrt = clawSrtDataByLanguage(talkId, "zh-cn");   //  简体中文字幕
+            if (StringUtils.isNotBlank(zhCnSrt)) {
+                //   写入英文与中文简体翻译字幕
+                String str = "zh-cn,,en";     // 主题分类数据
+                List<String> languageList = Arrays.asList(str.split(","));
+                for (String language : languageList) {
+                    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(savePath + "\\" + talkId + "." + language), "utf-8"));
+                    if("en".equals(language))  bw.write(enSrt);
+                    if("zh-cn".equals(language))  bw.write(zhCnSrt);
+                    bw.close();
+                }
+            }else{
+                String zhTwSrt = clawSrtDataByLanguage(talkId, "zh-tw");   //  繁体中文字幕
+                if(StringUtils.isBlank(zhTwSrt))  return;
+                //   写入英文与中文繁体翻译字幕
+                String str = "zh-tw,en";     // 主题分类数据
+                List<String> languageList = Arrays.asList(str.split(","));
+                for (String language : languageList) {
+                    BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(savePath + "\\" + talkId + "." + language), "utf-8"));
+                    if ("en".equals(language)) bw.write(enSrt);
+                    if ("zh-tw".equals(language)) bw.write(zhTwSrt);
+                    bw.close();
+                }
             }
+
+            Thread.sleep(300);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 根据演讲id 和语言下载字幕
+     *
+     * @param talkId
+     * @param language
+     * @return
+     */
+    public static String clawSrtDataByLanguage(int talkId, String language) {
+        String srt = doGet("https://www.ted.com/talks/" + talkId + "/transcript.json?language=" + language, null);
+        return srt;
+    }
+
 
     public static void queryTitle() {    // 根据标题查询
         try {
@@ -86,6 +131,8 @@ public class clawSrt {
     }
 
     public static void main(String[] args) {
-        clawBlankFile("out-new");
+        clawBlankFile("D:\\HanLP\\JsoupTED\\out-new");
+
+        //clawSrtData(2800,"out-add");
     }
 }
