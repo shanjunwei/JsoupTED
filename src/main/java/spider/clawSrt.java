@@ -60,7 +60,6 @@ public class clawSrt {
      */
     public static void clawSrtData(int talkId, String savePath) {
         try {
-
             /*for (String language : languageList) {
                 Map<String, String> param = new HashMap<>();
                 //param.put("language", language);
@@ -99,7 +98,6 @@ public class clawSrt {
                     bw.close();
                 }
             }
-
             Thread.sleep(300);
         } catch (Exception e) {
             e.printStackTrace();
@@ -132,7 +130,6 @@ public class clawSrt {
 
     public static void main(String[] args) {
         clawBlankFile("D:\\HanLP\\JsoupTED\\out-new");
-
         //clawSrtData(2800,"out-add");
     }
 }

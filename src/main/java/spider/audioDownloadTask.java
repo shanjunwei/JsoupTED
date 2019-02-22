@@ -48,7 +48,7 @@ public class audioDownloadTask {
 
     public static void main(String[] args) {
         if (args.length <= 1) {
-            System.out.println("请输入 起始于结束下标值，以空格分割，如 10 20");
+            System.out.println("请输入 起始与结束下标值，以空格分割，如 10 20");
         }
         int start = Integer.parseInt(args[0]);
         int end = Integer.parseInt(args[1]);
